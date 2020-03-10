@@ -1,0 +1,5 @@
+<launch>
+	<node pkg="nicp" type="nicp_ros_node" name="nicp_ros_node" output="screen">
+		<param name="config_file" type="string" value="/home/aditya/sandbox/gmm_fusion_sandbox/wet/src/nicp/nicp/nicp_conf/nicp_aligner_1_1.conf"/>
+	</node>
+</launch>

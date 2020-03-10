@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+	<name>nicp</name>
+	<version>1.0.0</version>
+	<description>NICP</description>
+	<maintainer email="adityand@andrew.cmu.edu">Aditya Dhawale</maintainer>
+	<license>BSD</license>
+
+	<buildtool_depend>catkin</buildtool_depend>
+	<depend>std_msgs</depend>
+	<depend>roscpp</depend>
+	<depend>sensor_msgs</depend>
+	<depend>nav_msgs</depend>
+	<depend>cv_bridge</depend>
+</package>
