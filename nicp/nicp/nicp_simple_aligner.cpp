@@ -31,7 +31,6 @@ int main(int argc, char **argv)
    *                               INPUT HANDLING *
    *********************************************************************************/
   // Print usage
-  printf("flag 0\n");
   if (argc < 4) {
     std::cout << "USAGE: ";
     std::cout << "nicp_odometry configurationFilename.txt "
@@ -48,7 +47,6 @@ int main(int argc, char **argv)
               << std::endl;
     return 0;
   }
-  printf("flag a\n");
   // Fill input parameter map
   map<string, float> inputParameters;
   bool fillInputParameters = fillInputParametersMap(inputParameters, argv[1]);
@@ -57,7 +55,6 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  printf("flag b\n");
   // Get general parameters
   map<string, float>::iterator it;
   float depthScale = 0.001f;
@@ -93,7 +90,7 @@ int main(int argc, char **argv)
   // Create the PinholePointProjector
   PinholePointProjector pointProjector;
 
-  printf("flag c\n");
+  // printf("flag c\n");
   // Create StatsCalculator and InformationMatrixCalculator
   StatsCalculatorIntegralImage statsCalculator;
   PointInformationMatrixCalculator pointInformationMatrixCalculator;
@@ -117,7 +114,7 @@ int main(int argc, char **argv)
       &pointProjector, &statsCalculator, &pointInformationMatrixCalculator,
       &normalInformationMatrixCalculator);
 
-  printf("flag d\n");
+  // printf("flag d\n");
   /*********************************************************************************
    *                             ODOMETRY COMPUTATION *
    *********************************************************************************/
@@ -135,7 +132,7 @@ int main(int argc, char **argv)
               << std::endl;
     return 0;
   }
-  printf("flag e\n");
+  // printf("flag e\n");
   // Sequentially read the images and match each one with the previous one
   RawDepthImage rawDepth;
   DepthImage depth, scaledDepth;
@@ -153,9 +150,9 @@ int main(int argc, char **argv)
     string timestamp, depthFilename;
     if (!(iss >> timestamp >> depthFilename)) continue;
     if (timestamp[0] == '#') continue;
-    std::cout << "Depth: " << depthFilename << std::endl;
+    // std::cout << "Depth: " << depthFilename << std::endl;
     rawDepth = imread(depthFilename, -1);
-    std::cout << "Depth: " << depthFilename << std::endl;
+    // std::cout << "Depth: " << depthFilename << std::endl;
     DepthImage_convert_16UC1_to_32FC1(depth, rawDepth, depthScale);
     DepthImage_scale(scaledDepth, depth, imageScale);
 
@@ -176,7 +173,7 @@ int main(int argc, char **argv)
     cloud = new Cloud();
 
     converter.compute(*cloud, scaledDepth, sensorOffset);
-    std::cout << "Current image " << depthFilename << std::endl;
+    // std::cout << "Current image " << depthFilename << std::endl;
 
     // If it is not the first depth align it with the previous one
     if (!firstDepth) {
@@ -189,16 +186,20 @@ int main(int argc, char **argv)
       aligner.align();
       globalT = globalT * aligner.T();
       globalT.matrix().row(3) << 0.0f, 0.0f, 0.0f, 1.0f;
-      std::cout << "Relative transformation: " << std::endl
-                << aligner.T().matrix() << std::endl;
+      // std::cout << "Relative transformation: " << std::endl
+      //<< aligner.T().matrix() << std::endl;
       delete (previousCloud);
     }
 
     // Write out global transformation
-    std::cout << "Global transformation: " << std::endl
-              << globalT.matrix() << std::endl;
-    std::cout << "********************************************************"
-              << std::endl;
+    // std::cout << "Global transformation: " << std::endl
+    //<< globalT.matrix() << std::endl;
+    // std::cout << "********************************************************"
+    //<< std::endl;
+
+    for (int i = 0; i < 16; ++i)
+      std::cout << globalT.matrix()(i / 4, i % 4) << ", ";
+    std::cout << "\n";
     cloud->save((depthFilename + ".nicp").c_str(), globalT, 1, true);
     Quaternionf globalRotation = Quaternionf(globalT.linear());
     globalRotation.normalize();
@@ -210,7 +211,7 @@ int main(int argc, char **argv)
     firstDepth    = false;
   }
 
-  printf("flag f\n");
+  // printf("flag f\n");
   return 0;
 }
 
