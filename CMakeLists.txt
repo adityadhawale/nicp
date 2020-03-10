@@ -3,11 +3,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 PROJECT(nicp)
 
 # Optionally compiling part
-OPTION(BUILD_NICP_VIEWER "enables NICP viewer" true)
+OPTION(BUILD_NICP_VIEWER "enables NICP viewer" false)
 OPTION(BUILD_NICP_TEST "enables NICP test" false)
 
 # The library prefix
 SET(LIB_PREFIX nicp)
+
+set(CMAKE_CXX_STANDARD 11)
 
 SET(nicp_C_FLAGS)
 SET(nicp_CXX_FLAGS)
@@ -46,15 +48,26 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${nicp_SOURCE_DIR}/cmake_modules)
 ADD_DEFINITIONS(-DUNIX)
 MESSAGE(STATUS "Compiling on Unix")
 
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -msse4.2 -fopenmp")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -msse4.2 -fopenmp -std=c++0x")
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -msse4.2 -fopenmp")
 SET(nicp_C_FLAGS "${nicp_C_FLAGS} -Wall -W")
-SET(nicp_CXX_FLAGS "${nicp_CXX_FLAGS} -Wall -W")
+SET(nicp_CXX_FLAGS "${nicp_CXX_FLAGS} -Wall -W -std=c++0x")
 
 # Specifying compiler flags
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${nicp_CXX_FLAGS}")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${nicp_C_FLAGS}")
 
+# Create a small ros node to run NICP
+find_package(catkin REQUIRED COMPONENTS 
+	roscpp
+	sensor_msgs
+	nav_msgs
+	std_msgs
+	cv_bridge
+	)
+
+catkin_package(CATKIN_DEPENDS roscpp)
+INCLUDE_DIRECTORIES(${catkin_INCLUDE_DIRS})
 # Find Eigen3
 FIND_PACKAGE(Eigen3 3.2.0 REQUIRED)
 INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
@@ -73,31 +86,33 @@ IF(OPENMP_FOUND)
 ENDIF(OPENMP_FOUND)
 
 # Find Opencv
-FIND_PACKAGE(OpenCV 2.4.8 REQUIRED)
+set(OpenCV_DIR "/home/aditya/libraries/opencv/release/share/OpenCV")
+FIND_PACKAGE(OpenCV REQUIRED)
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
 # Set up the top-level include directories
 INCLUDE_DIRECTORIES(${nicp_SOURCE_DIR}/nicp)
 
-IF(BUILD_NICP_VIEWER)
-  # OpenGL is used in the draw actions for the different types, as well
-  # as for creating the GUI itself
-  FIND_PACKAGE(OpenGL REQUIRED)
-  INCLUDE_DIRECTORIES(${OPENGL_INCLUDE})
-  MESSAGE(STATUS "Compiling with OpenGL support")
-
-  # Find Qt5
-  FIND_PACKAGE(Qt5 COMPONENTS Core Xml OpenGL Gui Widgets REQUIRED)
-  INCLUDE_DIRECTORIES(
-    ${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS}
-  )
-  SET(CMAKE_CXX_FLAGS "-fPIC")
-
-  # For building the GUI
-  FIND_PACKAGE(QGLViewer REQUIRED)
-  INCLUDE_DIRECTORIES(${QGLVIEWER_INCLUDE_DIR})
-ENDIF(BUILD_NICP_VIEWER)
+#IF(BUILD_NICP_VIEWER)
+#  # OpenGL is used in the draw actions for the different types, as well
+#  # as for creating the GUI itself
+#  FIND_PACKAGE(OpenGL REQUIRED)
+#  INCLUDE_DIRECTORIES(${OPENGL_INCLUDE})
+#  MESSAGE(STATUS "Compiling with OpenGL support")
+#
+#  # Find Qt5
+#  FIND_PACKAGE(Qt5 COMPONENTS Core Xml OpenGL Gui Widgets REQUIRED)
+#  INCLUDE_DIRECTORIES(
+#    ${Qt5Core_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS}
+#    ${Qt5Widgets_INCLUDE_DIRS} ${Qt5OpenGL_INCLUDE_DIRS}
+#  )
+#  SET(CMAKE_CXX_FLAGS "-fPIC")
+#
+#  # For building the GUI
+#  FIND_PACKAGE(QGLViewer REQUIRED)
+#  INCLUDE_DIRECTORIES(${QGLVIEWER_INCLUDE_DIR})
+#ENDIF(BUILD_NICP_VIEWER)
 
 # Include the subdirectories
 ADD_SUBDIRECTORY(nicp)
+

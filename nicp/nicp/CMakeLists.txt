@@ -40,3 +40,7 @@ TARGET_LINK_LIBRARIES(nicp_simple_aligner nicp ${OpenCV_LIBS})
 ADD_EXECUTABLE(nicp_aligner nicp_aligner.cpp )
 SET_TARGET_PROPERTIES(nicp_aligner PROPERTIES OUTPUT_NAME nicp_aligner)
 TARGET_LINK_LIBRARIES(nicp_aligner nicp ${OpenCV_LIBS})
+
+add_executable (nicp_ros_node /home/aditya/sandbox/gmm_fusion_sandbox/wet/src/nicp/nicp/nicp_ros/nicp_ros_node.cpp)
+TARGET_LINK_LIBRARIES (nicp_ros_node nicp ${OpenCV_LIBS} ${catkin_LIBRARIES})
+
