@@ -1,5 +1,15 @@
 <launch>
-	<node pkg="nicp" type="nicp_ros_node" name="nicp_ros_node" output="screen">
-		<param name="config_file" type="string" value="/home/aditya/sandbox/gmm_fusion_sandbox/wet/src/nicp/nicp/nicp_conf/nicp_aligner_1_1.conf"/>
-	</node>
+  <arg name="bagfilename" default="/home/john/bagfiles/rocky0505_200311_handcarry_D"/>
+  <node pkg="nicp" type="nicp_ros_node" name="nicp_ros_node" output="screen">
+    <param name="config_file" type="string" value="$(find nicp)/nicp/nicp_conf/nicp_aligner_1_1.conf"/>
+    <remap to="/rocky0505/forward_realsense/depth/image_rect_raw" from="/nicp_image" />
+  </node>
+
+  <node pkg="rosbag" type="record" name="record"
+    output="screen" args="-O $(arg bagfilename)_output.bag /nicp_estimate /rocky0505/vicon_odom /rocky0505/forward_realsense/depth/image_rect_raw"
+	/>
+
+  <node pkg="rosbag" type="play" name="play"
+	output="screen" args="--clock -r 0.1 $(arg bagfilename).bag"
+	/>
 </launch>

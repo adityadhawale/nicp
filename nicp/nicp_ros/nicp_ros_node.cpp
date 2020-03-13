@@ -10,11 +10,11 @@
 #include <map>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "/home/aditya/sandbox/gmm_fusion_sandbox/wet/src/nicp/nicp/nicp/alignerprojective.h"
-#include "/home/aditya/sandbox/gmm_fusion_sandbox/wet/src/nicp/nicp/nicp/depthimageconverterintegralimage.h"
-#include "/home/aditya/sandbox/gmm_fusion_sandbox/wet/src/nicp/nicp/nicp/imageutils.h"
-#include "/home/aditya/sandbox/gmm_fusion_sandbox/wet/src/nicp/nicp/nicp/pinholepointprojector.h"
-#include "/home/aditya/sandbox/gmm_fusion_sandbox/wet/src/nicp/nicp/nicp/statscalculatorintegralimage.h"
+#include "../nicp/alignerprojective.h"
+#include "../nicp/depthimageconverterintegralimage.h"
+#include "../nicp/imageutils.h"
+#include "../nicp/pinholepointprojector.h"
+#include "../nicp/statscalculatorintegralimage.h"
 
 using namespace std;
 using namespace Eigen;
@@ -45,9 +45,9 @@ void image_callback(const sensor_msgs::ImageConstPtr &image_msg)
   _image_encoding = image_msg->encoding;
   if (_latest_time != time) {
     cv_bridge::CvImagePtr cv_ptr;
-    if (image_msg->encoding == "16SC1")
+    if (image_msg->encoding == "16UC1")
       cv_ptr = cv_bridge::toCvCopy(image_msg,
-                                   sensor_msgs::image_encodings::TYPE_16SC1);
+                                   sensor_msgs::image_encodings::TYPE_16UC1);
     else
       cv_ptr = cv_bridge::toCvCopy(image_msg,
                                    sensor_msgs::image_encodings::TYPE_32FC1);
